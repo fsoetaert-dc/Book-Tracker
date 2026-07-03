@@ -22,6 +22,14 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+bin/
+obj/
+.vs/
+*.user
+*.db
+*.db-shm
+*.db-wal
+
 
 # .NET Core
 project.lock.json

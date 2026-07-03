@@ -1,44 +1,41 @@
+using BookTracker.Api.Application;
+using BookTracker.Api.Application.CreateBook;
+using BookTracker.Api.Storage;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseSqlite(builder.Configuration.GetConnectionString("BookTracker"));
+});
+
+builder.Services.AddScoped<IBookRepository, EfBookRepository>();
+
+builder.Services.AddScoped<BookService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    using (var scope = app.Services.CreateScope())
+    {
+        scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.EnsureCreated();
+    }
 }
 
-app.UseHttpsRedirection();
+app.MapGet("/books", async (BookService service) => Results.Ok(await service.GetAllBooks()));
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
 
-app.MapGet("/weatherforecast", () =>
+app.MapPost("/books", async (CreateBookRequest request, BookService service) =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    var response = await service.CreateBook(request);
+    return Results.Created($"/books/{response.Id}", response);
+});
+
+
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+public partial class Program; // belangrijk voor integratietesten met WebApplicationFactory
+
