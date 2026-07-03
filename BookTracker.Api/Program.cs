@@ -45,6 +45,17 @@ app.MapDelete("/books/{id:int}", async (int id, BookService service) =>
     return Results.NoContent();
 });
 
+app.MapPut("/books/{id:int}", async (int id, BookTracker.Api.Application.UpdateBook.UpdateBookRequest request, BookService service) =>
+{
+    var updated = await service.UpdateBook(id, request);
+
+    if (!updated)
+    {
+        return Results.NotFound();
+    }
+
+    return Results.NoContent();
+});
 
 app.Run();
 
