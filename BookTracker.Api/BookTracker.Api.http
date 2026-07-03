@@ -21,7 +21,7 @@ DELETE http://localhost:5192/books/1
 DELETE http://localhost:5192/books/9999
 
 ### Update Book
-PUT http://localhost:5192/books/1
+PUT http://localhost:5192/books/3
 Content-Type: application/json
 
 {
@@ -29,3 +29,9 @@ Content-Type: application/json
   "author": "David Bowie",
   "year": 1971
 }
+
+### Get Book by Id
+GET http://localhost:5192/books/5
+
+### Get Book by Id that doesn't exist
+GET http://localhost:5192/books/9999

@@ -26,6 +26,17 @@ if (app.Environment.IsDevelopment())
 
 app.MapGet("/books", async (BookService service) => Results.Ok(await service.GetAllBooks()));
 
+app.MapGet("/books/{id:int}", async (int id, BookService service) =>
+{
+    var book = await service.GetBookById(id);
+
+    if (book is null)
+    {
+        return Results.NotFound();
+    }
+
+    return Results.Ok(book);
+});
 
 app.MapPost("/books", async (CreateBookRequest request, BookService service) =>
 {
@@ -56,6 +67,7 @@ app.MapPut("/books/{id:int}", async (int id, BookTracker.Api.Application.UpdateB
 
     return Results.NoContent();
 });
+
 
 app.Run();
 
