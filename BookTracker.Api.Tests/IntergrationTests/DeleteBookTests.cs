@@ -1,5 +1,6 @@
 using System.Net;
 using BookTracker.Api.Domain;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace BookTracker.Api.Tests.IntegrationTests.DeleteBook;
 
@@ -43,6 +44,7 @@ public class DeleteBookTests
 
         var response = await client.DeleteAsync("/books/9999");
 
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         // voeg hier een assert toe die verifiëert dat status code NotFound is.
     }
 }
