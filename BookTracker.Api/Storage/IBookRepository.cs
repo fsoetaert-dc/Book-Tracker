@@ -6,8 +6,6 @@ namespace BookTracker.Api.Storage;
 public interface IBookRepository
 {
     Task<bool> UpdateAsync(Book book);
-    Task<IReadOnlyList<Book>> GetAllAsync();
-    Task<Book?> GetByIdAsync(int id);
     Task<Book> AddAsync(Book book);
     Task<bool> DeleteAsync(int id);
 }
