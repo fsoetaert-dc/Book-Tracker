@@ -6,6 +6,7 @@ using BookTracker.Api.Application.BookList;
 using BookTracker.Api.Application.CreateBook;
 using BookTracker.Api.Application.UpdateBook;
 using BookTracker.Api.Application.DeleteBook;
+using BookTracker.Api.Seeding;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +28,11 @@ if (app.Environment.IsDevelopment())
 {
     using (var scope = app.Services.CreateScope())
     {
-        scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.EnsureCreated();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        dbContext.Database.EnsureCreated();
+        if (builder.Configuration.GetValue<bool>("SeedDatabase"))
+            DatabaseSeeder.SeedBooks(dbContext, 500);
     }
 }
 
