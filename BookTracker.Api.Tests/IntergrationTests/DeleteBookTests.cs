@@ -3,7 +3,7 @@ using BookTracker.Api.Domain;
 
 namespace BookTracker.Api.Tests.IntegrationTests.DeleteBook;
 
-public class DeleteBookTests: IntegrationTest
+public class DeleteBookTests : IntegrationTest
 {
 
     [Fact]
@@ -24,7 +24,9 @@ public class DeleteBookTests: IntegrationTest
 
         var response = await Client.DeleteAsync("/books/1");
 
-        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        await response.ShouldHaveStatusCode(HttpStatusCode.NoContent);
+
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode); // mag ook in principe weg
 
         var book = Reader.Query(db => db.Books.Find(1));
 
@@ -36,6 +38,8 @@ public class DeleteBookTests: IntegrationTest
     {
         var response = await Client.DeleteAsync("/books/9999");
 
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        await response.ShouldHaveStatusCode(HttpStatusCode.NotFound);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode); // mag ook in principe weg
     }
 }

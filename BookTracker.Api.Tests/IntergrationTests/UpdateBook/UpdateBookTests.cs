@@ -32,7 +32,9 @@ public class UpdateBookTests : IntegrationTest
 
         var response = await Client.PutAsJsonAsync("/books/1", request);
 
-        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        await response.ShouldHaveStatusCode(HttpStatusCode.NoContent);
+
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode); // mag in principe weg want lijn erboven checkt met een duidelijke foutmelding te geven
 
         var book = Reader.Query(db => db.Books.Find(1));
 
@@ -55,6 +57,8 @@ public class UpdateBookTests : IntegrationTest
 
         var response = await Client.PutAsJsonAsync("/books/9999", request);
 
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        await response.ShouldHaveStatusCode(HttpStatusCode.NotFound);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode); // mag in principe weg want lijn erboven checkt met een duidelijke foutmelding te geven
     }
 }
