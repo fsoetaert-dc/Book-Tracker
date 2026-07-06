@@ -35,3 +35,9 @@ GET http://localhost:5192/books/5
 
 ### Get Book by Id that doesn't exist
 GET http://localhost:5192/books/9999
+
+### Get Books Page 1
+GET http://localhost:5192/books?page=1&pageSize=10
+
+### Get Books Page 2
+GET http://localhost:5192/books?page=2&pageSize=10
