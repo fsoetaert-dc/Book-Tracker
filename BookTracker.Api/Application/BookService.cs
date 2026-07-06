@@ -16,30 +16,32 @@ public class BookService(IBookRepository bookRepository)
         var summary = books.Select(b => new BookInfo
         {
             Id = b.Id,
-            Title = b.Title,
-            Author = b.Author
+            Title = b.Title.Value,
+            Author = b.Author.Value
         });
         return [.. summary]; // [.. var] is hetzelfde als to list
     }
-    public async Task<CreateBookResponse> CreateBook(CreateBookRequest request)
-    {
-        var book =
-            new Book
-            {
-                Title = request.Title,
-                Author = request.Author,
-                Year = request.Year
-            };
-        var savedBook = await bookRepository.AddAsync(book);
-        return
-            new CreateBookResponse
-            {
-                Id = savedBook.Id,
-                Title = savedBook.Title,
-                Author = savedBook.Author,
-                Year = savedBook.Year
-            };
-    }
+public async Task<CreateBookResponse> CreateBook(CreateBookRequest request)
+{
+    var book =
+        new Book
+        {
+            Title = new BookTitle(request.Title),
+            Author = new AuthorName(request.Author),
+            Year = request.Year
+        };
+
+    var savedBook = await bookRepository.AddAsync(book);
+
+    return
+        new CreateBookResponse
+        {
+            Id = savedBook.Id,
+            Title = savedBook.Title.Value,
+            Author = savedBook.Author.Value,
+            Year = savedBook.Year
+        };
+}
     public async Task<bool> DeleteBook(int id)
     {
         return await bookRepository.DeleteAsync(id);
@@ -50,8 +52,8 @@ public class BookService(IBookRepository bookRepository)
             new Book
             {
                 Id = id,
-                Title = request.Title,
-                Author = request.Author,
+                Title = new BookTitle(request.Title),
+                Author = new AuthorName(request.Author),
                 Year = request.Year
             };
 
@@ -70,8 +72,8 @@ public class BookService(IBookRepository bookRepository)
         new BookDetails
         {
             Id = book.Id,
-            Title = book.Title,
-            Author = book.Author,
+            Title = book.Title.Value,
+            Author = book.Author.Value,
             Year = book.Year
         };
 }
