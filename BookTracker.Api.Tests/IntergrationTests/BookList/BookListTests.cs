@@ -38,4 +38,143 @@ public class BookListTests : IntegrationTest
         Assert.Equal(1, result.TotalItems);
         Assert.Equal(1, result.TotalPages);
     }
+
+    [Fact]
+    public async Task GetBooksCanSearchByTitle()
+    {
+        Writer.Seed(db =>
+        {
+            db.Books.AddRange(
+                new Book
+                {
+                    Title = new BookTitle("Dune"),
+                    Author = new AuthorName("Frank Herbert"),
+                    Year = 1965
+                },
+                new Book
+                {
+                    Title = new BookTitle("The Big Sleep"),
+                    Author = new AuthorName("Raymond Chandler"),
+                    Year = 1939
+                });
+        });
+
+        var response = await Client.GetAsync("/books?search=dune");
+
+        var result = await response.ReadJsonAs<PagedResult<BookInfo>>(HttpStatusCode.OK);
+
+        var book = Assert.Single(result.Items);
+
+        Assert.Equal("Dune", book.Title);
+        Assert.Equal("Frank Herbert", book.Author);
+        Assert.Equal(1, result.TotalItems);
+        Assert.Equal(1, result.TotalPages);
+    }
+
+    [Fact]
+    public async Task GetBooksCanSearchByAuthor()
+    {
+        Writer.Seed(db =>
+        {
+            db.Books.AddRange(
+                new Book
+                {
+                    Title = new BookTitle("Dune"),
+                    Author = new AuthorName("Frank Herbert"),
+                    Year = 1965
+                },
+                new Book
+                {
+                    Title = new BookTitle("The Big Sleep"),
+                    Author = new AuthorName("Raymond Chandler"),
+                    Year = 1939
+                });
+        });
+
+        var response = await Client.GetAsync("/books?search=frank");
+
+        var result = await response.ReadJsonAs<PagedResult<BookInfo>>(HttpStatusCode.OK);
+
+        var book = Assert.Single(result.Items);
+
+        Assert.Equal("Dune", book.Title);
+        Assert.Equal("Frank Herbert", book.Author);
+        Assert.Equal(1, result.TotalItems);
+        Assert.Equal(1, result.TotalPages);
+    }
+
+    [Fact]
+    public async Task GetBooksAppliesPagingAfterSearch()
+    {
+        Writer.Seed(db =>
+        {
+            db.Books.AddRange(
+                new Book
+                {
+                    Title = new BookTitle("Dune"),
+                    Author = new AuthorName("Frank Herbert"),
+                    Year = 1965
+                },
+                new Book
+                {
+                    Title = new BookTitle("Dune Messiah"),
+                    Author = new AuthorName("Frank Herbert"),
+                    Year = 1969
+                },
+                new Book
+                {
+                    Title = new BookTitle("The Big Sleep"),
+                    Author = new AuthorName("Raymond Chandler"),
+                    Year = 1939
+                });
+        });
+
+        var response = await Client.GetAsync("/books?search=dune&page=2&pageSize=1");
+
+        var result = await response.ReadJsonAs<PagedResult<BookInfo>>(HttpStatusCode.OK);
+
+        var book = Assert.Single(result.Items);
+
+        Assert.Equal("Dune Messiah", book.Title);
+        Assert.Equal(2, result.Page);
+        Assert.Equal(1, result.PageSize);
+        Assert.Equal(2, result.TotalItems);
+        Assert.Equal(2, result.TotalPages);
+    }
+
+    [Fact]
+    public async Task GetBooksAppliesPagingAfterSearchWithoutSearchResults()
+    {
+        Writer.Seed(db =>
+        {
+            db.Books.AddRange(
+                new Book
+                {
+                    Title = new BookTitle("Dune"),
+                    Author = new AuthorName("Frank Herbert"),
+                    Year = 1965
+                },
+                new Book
+                {
+                    Title = new BookTitle("Dune Messiah"),
+                    Author = new AuthorName("Frank Herbert"),
+                    Year = 1969
+                },
+                new Book
+                {
+                    Title = new BookTitle("The Big Sleep"),
+                    Author = new AuthorName("Raymond Chandler"),
+                    Year = 1939
+                });
+        });
+
+        var response = await Client.GetAsync("/books?search=opera&page=2&pageSize=1");
+
+        var result = await response.ReadJsonAs<PagedResult<BookInfo>>(HttpStatusCode.OK);
+
+        Assert.Equal(2, result.Page); // opgegeven maximum pages
+        Assert.Equal(1, result.PageSize); // opgegeven pagesize
+        Assert.Equal(0, result.TotalItems); // want geen items voldoen aan de search query
+        Assert.Equal(0, result.TotalPages); // want geen items gevonden
+    }
 }
