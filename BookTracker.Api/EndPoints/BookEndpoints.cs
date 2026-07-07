@@ -1,9 +1,7 @@
-using System.Linq.Expressions;
-using BookTracker.Api.Application;
-using BookTracker.Api.Application.BookList;
+using BookTracker.Api.Application.GetBookSummaries;
 using BookTracker.Api.Application.CreateBook;
 using BookTracker.Api.Application.DeleteBook;
-using BookTracker.Api.Application.GetBookById;
+using BookTracker.Api.Application.GetBookDetails;
 using BookTracker.Api.Application.UpdateBook;
 using BookTracker.Api.Domain;
 
@@ -13,22 +11,22 @@ public static class BookEndpoints
 {
     public static IEndpointRouteBuilder MapBookEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/books", GetAllBooks);
-        app.MapGet("/books/{id:int}", GetBookById);
+        app.MapGet("/books", GetBookSummaries);
+        app.MapGet("/books/{id:int}", GetBookDetails);
         app.MapPost("/books", CreateBook);
         app.MapPut("/books/{id:int}", UpdateBook);
         app.MapDelete("/books/{id:int}", DeleteBook); // add the missing mapping for the DELETE route here
         return app;
     }
 
-    public static async Task<IResult> GetAllBooks([AsParameters] GetBookListRequest request,GetBookListQuery query)
+    public static async Task<IResult> GetBookSummaries([AsParameters] GetBookSummariesRequest request, GetBookSummariesQueryHandler query)
     {
         var books = await query.Execute(request);
 
         return Results.Ok(books);
     }
 
-    public static async Task<IResult> GetBookById(int id, GetBookByIdQuery query)
+    public static async Task<IResult> GetBookDetails(int id, GetBookDetailsQueryHandler query)
     {
         var book = await query.Execute(id);
 

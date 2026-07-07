@@ -1,6 +1,6 @@
 using System.Net;
 using BookTracker.Api.Application;
-using BookTracker.Api.Application.BookList;
+using BookTracker.Api.Application.GetBookSummaries;
 using BookTracker.Api.Domain;
 
 namespace BookTracker.Api.Tests.IntegrationTests.BookList;
@@ -10,7 +10,7 @@ public class BookListTests : IntegrationTest
     private readonly CustomWebApplicationFactory factory = new();
 
     [Fact]
-    public async Task GetBooksReturnsBooks()
+    public async Task GetBookSummariesReturnsBookSummaries()
     {
 
         Writer.Seed(db => db.Books.Add(
@@ -24,7 +24,7 @@ public class BookListTests : IntegrationTest
 
         var response = await Client.GetAsync("/books");
 
-        var result = await response.ReadJsonAs<PagedResult<BookInfo>>(HttpStatusCode.OK);
+        var result = await response.ReadJsonAs<PagedResult<BookSummary>>(HttpStatusCode.OK);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -40,7 +40,7 @@ public class BookListTests : IntegrationTest
     }
 
     [Fact]
-    public async Task GetBooksCanSearchByTitle()
+    public async Task GetBookSummariesCanSearchByTitle()
     {
         Writer.Seed(db =>
         {
@@ -61,7 +61,7 @@ public class BookListTests : IntegrationTest
 
         var response = await Client.GetAsync("/books?search=dune");
 
-        var result = await response.ReadJsonAs<PagedResult<BookInfo>>(HttpStatusCode.OK);
+        var result = await response.ReadJsonAs<PagedResult<BookSummary>>(HttpStatusCode.OK);
 
         var book = Assert.Single(result.Items);
 
@@ -72,7 +72,7 @@ public class BookListTests : IntegrationTest
     }
 
     [Fact]
-    public async Task GetBooksCanSearchByAuthor()
+    public async Task GetBooksSummariesCanSearchByAuthor()
     {
         Writer.Seed(db =>
         {
@@ -93,7 +93,7 @@ public class BookListTests : IntegrationTest
 
         var response = await Client.GetAsync("/books?search=frank");
 
-        var result = await response.ReadJsonAs<PagedResult<BookInfo>>(HttpStatusCode.OK);
+        var result = await response.ReadJsonAs<PagedResult<BookSummary>>(HttpStatusCode.OK);
 
         var book = Assert.Single(result.Items);
 
@@ -104,7 +104,7 @@ public class BookListTests : IntegrationTest
     }
 
     [Fact]
-    public async Task GetBooksAppliesPagingAfterSearch()
+    public async Task GetBookSummariesApplyPagingAfterSearch()
     {
         Writer.Seed(db =>
         {
@@ -131,7 +131,7 @@ public class BookListTests : IntegrationTest
 
         var response = await Client.GetAsync("/books?search=dune&page=2&pageSize=1");
 
-        var result = await response.ReadJsonAs<PagedResult<BookInfo>>(HttpStatusCode.OK);
+        var result = await response.ReadJsonAs<PagedResult<BookSummary>>(HttpStatusCode.OK);
 
         var book = Assert.Single(result.Items);
 
@@ -143,7 +143,7 @@ public class BookListTests : IntegrationTest
     }
 
     [Fact]
-    public async Task GetBooksAppliesPagingAfterSearchWithoutSearchResults()
+    public async Task GetBooksSummariesAppliesPagingAfterSearchWithoutSearchResults()
     {
         Writer.Seed(db =>
         {
@@ -170,7 +170,7 @@ public class BookListTests : IntegrationTest
 
         var response = await Client.GetAsync("/books?search=opera&page=2&pageSize=1");
 
-        var result = await response.ReadJsonAs<PagedResult<BookInfo>>(HttpStatusCode.OK);
+        var result = await response.ReadJsonAs<PagedResult<BookSummary>>(HttpStatusCode.OK);
 
         Assert.Equal(2, result.Page); // opgegeven maximum pages
         Assert.Equal(1, result.PageSize); // opgegeven pagesize

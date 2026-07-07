@@ -1,9 +1,9 @@
 using BookTracker.Api.Storage;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookTracker.Api.Application.GetBookById;
+namespace BookTracker.Api.Application.GetBookDetails;
 
-public class GetBookByIdQuery(AppDbContext dbContext)
+public class GetBookDetailsQueryHandler(AppDbContext dbContext)
 {
     public async Task<BookDetails?> Execute(int id)
     {

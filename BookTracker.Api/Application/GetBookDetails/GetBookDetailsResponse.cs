@@ -1,4 +1,4 @@
-namespace BookTracker.Api.Application.GetBookById;
+namespace BookTracker.Api.Application.GetBookDetails;
 
 public class BookDetails
 {
