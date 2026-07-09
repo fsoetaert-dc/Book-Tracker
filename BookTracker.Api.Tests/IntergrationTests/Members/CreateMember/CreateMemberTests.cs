@@ -58,8 +58,7 @@ public class CreateMemberTests : IntegrationTest
             new CreateMemberRequest
             {
                 Name = "Carson McCullers",
-                Email = "     ",
-
+                Email = "     "
             };
 
         var response = await Client.PostAsJsonAsync("/members", request);

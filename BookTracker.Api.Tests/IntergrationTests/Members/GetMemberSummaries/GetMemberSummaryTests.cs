@@ -88,7 +88,7 @@ public class GetMemberSummariesTests : IntegrationTest
             });
         });
 
-        var response = await Client.GetAsync("/members?search=Belly.");
+        var response = await Client.GetAsync("/members?search=Belly.row@hotmail");
 
         var result = await response.ReadJsonAs<PagedResult<MemberSummary>>(HttpStatusCode.OK);
 

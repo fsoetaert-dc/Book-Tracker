@@ -133,9 +133,9 @@ public class BookListTests : IntegrationTest
 
         var result = await response.ReadJsonAs<PagedResult<BookSummary>>(HttpStatusCode.OK);
 
-        var book = Assert.Single(result.Items); //waarom?
+        var book = Assert.Single(result.Items); //items per page of found result
 
-        Assert.Equal("Dune Messiah", book.Title); // kijkt naar ID die toegewezen is
+        Assert.Equal("Dune Messiah", book.Title); // kijkt naar ID die toegewezen is, dus eerste zoekresultaat is die met de laagste Id van de gevonden books.
         Assert.Equal(2, result.Page);
         Assert.Equal(1, result.PageSize);
         Assert.Equal(2, result.TotalItems);
