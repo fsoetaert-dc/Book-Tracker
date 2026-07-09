@@ -4,7 +4,7 @@ using BookTracker.Api.Domain;
 
 namespace BookTracker.Api.Tests.IntegrationTests.GetBookById;
 
-public class GetBookByIdTests : IntegrationTest
+public class GetBookDetailsTests : IntegrationTest
 {
 
     [Fact]
@@ -23,7 +23,7 @@ public class GetBookByIdTests : IntegrationTest
 
         var response = await Client.GetAsync("/books/1");
 
-        var book = await response.ReadJsonAs<BookDetails>(HttpStatusCode.OK);
+        var book = await response.ReadJsonAs<GetBookDetailsResponse>(HttpStatusCode.OK);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.NotNull(book);

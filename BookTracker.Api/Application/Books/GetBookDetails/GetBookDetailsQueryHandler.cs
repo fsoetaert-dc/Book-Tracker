@@ -3,15 +3,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookTracker.Api.Application.GetBookDetails;
 
-public class GetBookDetailsQueryHandler(AppDbContext dbContext) :IHandler
+public class GetBookDetailsQueryHandler(AppDbContext dbContext) : IHandler
 {
-    public async Task<BookDetails?> Execute(int id)
+    public async Task<GetBookDetailsResponse?> Execute(int id)
     {
         return await dbContext.Books
             .AsNoTracking()
             .Where(book => book.Id == id)
             .Select(book =>
-                new BookDetails
+                new GetBookDetailsResponse
                 {
                     Id = book.Id,
                     Title = book.Title.Value,

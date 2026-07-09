@@ -133,9 +133,9 @@ public class BookListTests : IntegrationTest
 
         var result = await response.ReadJsonAs<PagedResult<BookSummary>>(HttpStatusCode.OK);
 
-        var book = Assert.Single(result.Items);
+        var book = Assert.Single(result.Items); //waarom?
 
-        Assert.Equal("Dune Messiah", book.Title);
+        Assert.Equal("Dune Messiah", book.Title); // kijkt naar ID die toegewezen is
         Assert.Equal(2, result.Page);
         Assert.Equal(1, result.PageSize);
         Assert.Equal(2, result.TotalItems);

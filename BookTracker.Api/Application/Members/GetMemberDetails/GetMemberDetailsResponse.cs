@@ -1,0 +1,7 @@
+namespace BookTracker.Api.Application.GetMemberDetails;
+public class GetMemberDetailsResponse
+{
+    public int Id { get; set; }
+    public required string Name { get; set; }
+    public required string Email { get; set; }
+}
