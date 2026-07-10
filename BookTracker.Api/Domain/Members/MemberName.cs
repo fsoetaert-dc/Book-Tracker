@@ -8,12 +8,12 @@ public sealed record MemberName
 
     public MemberName(string value)
     {
-        var cleaned = value.Trim();
-
-        if (string.IsNullOrWhiteSpace(cleaned))
+        if (string.IsNullOrWhiteSpace(value))
         {
             throw new DomainException("Membername is required.");
         }
+
+        var cleaned = value.Trim();
 
         if (cleaned.Length > MaxLength)
         {
