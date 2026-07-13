@@ -8,8 +8,6 @@ namespace BookTracker.Api.Tests.IntegrationTests.GetMemberSummaries;
 
 public class GetMemberSummariesTests : IntegrationTest
 {
-    private readonly CustomWebApplicationFactory factory = new();
-
     [Fact]
     public async Task GetMemberSummariesReturnsMemberSummaries()
     {
@@ -18,7 +16,7 @@ public class GetMemberSummariesTests : IntegrationTest
             new Member
             {
                 Name = new MemberName("Cannery Row"),
-                Email = new MemberEmail("Cannery.row@hotmail.com")
+                Email = new MemberEmail("cannery.row@hotmail.com")
             }
         ));
 
@@ -32,7 +30,7 @@ public class GetMemberSummariesTests : IntegrationTest
 
         var memberDetails = Assert.Single(result.Items);
         Assert.Equal("Cannery Row", memberDetails.Name);
-        Assert.Equal("Cannery.row@hotmail.com", memberDetails.Email);
+        Assert.Equal("cannery.row@hotmail.com", memberDetails.Email);
         Assert.Equal(1, result.Page);
         Assert.Equal(10, result.PageSize);
         Assert.Equal(1, result.TotalItems);
@@ -65,7 +63,7 @@ public class GetMemberSummariesTests : IntegrationTest
         var member = Assert.Single(result.Items);
 
         Assert.Equal("Cannery Row", member.Name);
-        Assert.Equal("Cannery.row@hotmail.com", member.Email);
+        Assert.Equal("cannery.row@hotmail.com", member.Email);
         Assert.Equal(1, result.TotalItems);
         Assert.Equal(1, result.TotalPages);
     }
@@ -88,14 +86,14 @@ public class GetMemberSummariesTests : IntegrationTest
             });
         });
 
-        var response = await Client.GetAsync("/members?search=Belly.row@hotmail");
+        var response = await Client.GetAsync("/members?search=belly.row@hotmail");
 
         var result = await response.ReadJsonAs<PagedResult<MemberSummary>>(HttpStatusCode.OK);
 
         var member = Assert.Single(result.Items);
 
         Assert.Equal("Belly Row", member.Name);
-        Assert.Equal("Belly.row@hotmail.com", member.Email);
+        Assert.Equal("belly.row@hotmail.com", member.Email);
         Assert.Equal(1, result.TotalItems);
         Assert.Equal(1, result.TotalPages);
     }

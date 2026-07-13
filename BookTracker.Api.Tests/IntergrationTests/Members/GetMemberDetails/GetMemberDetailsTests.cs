@@ -28,7 +28,7 @@ public class GetMemberDetailsTests : IntegrationTest
         Assert.NotNull(member);
         Assert.Equal(1, member.Id);
         Assert.Equal("Frank Herbert", member.Name);
-        Assert.Equal("Frank.Herbert@hotmail.com", member.Email);
+        Assert.Equal("frank.herbert@hotmail.com", member.Email);
     }
 
     [Fact]

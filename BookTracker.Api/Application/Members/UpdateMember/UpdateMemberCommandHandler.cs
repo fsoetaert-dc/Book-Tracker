@@ -1,3 +1,4 @@
+using BookTracker.Api.Application.Members;
 using BookTracker.Api.Domain;
 using BookTracker.Api.Domain.Members;
 using BookTracker.Api.Storage;
@@ -8,14 +9,21 @@ public class UpdateMemberCommandHandler(IMemberRepository memberRepository) : IH
 {
     public async Task<bool> Execute(int id, UpdateMemberRequest request)
     {
+        var name = new MemberName(request.Name);
+        var email = new MemberEmail(request.Email);
+
         var member =
             new Member
             {
                 Id = id,
-                Name = new MemberName(request.Name),
-                Email = new MemberEmail(request.Email),
-
+                Name = name,
+                Email = email,
             };
+
+        if (await memberRepository.EmailExistsAsync(email))
+        {
+            throw new MemberEmailAlreadyExistsException();
+        }
 
         return await memberRepository.UpdateAsync(member);
     }

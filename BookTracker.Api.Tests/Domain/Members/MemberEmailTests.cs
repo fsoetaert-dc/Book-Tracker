@@ -1,3 +1,5 @@
+using System.Net.Security;
+using System.Security.Cryptography;
 using BookTracker.Api.Domain;
 using BookTracker.Api.Domain.Members;
 
@@ -10,7 +12,7 @@ public class MemberEmailTests
     {
         var email = new MemberEmail("Freddy.mercury@hotmail.com");
 
-        Assert.Equal("Freddy.mercury@hotmail.com", email.Value);
+        Assert.Equal("freddy.mercury@hotmail.com", email.Value);
     }
 
     [Fact]
@@ -18,7 +20,7 @@ public class MemberEmailTests
     {
         var email = new MemberEmail("  Freddy.mercury@hotmail.com  ");
 
-        Assert.Equal("Freddy.mercury@hotmail.com", email.Value);
+        Assert.Equal("freddy.mercury@hotmail.com", email.Value);
     }
 
     [Fact]
@@ -46,4 +48,15 @@ public class MemberEmailTests
 
         Assert.Equal("Email is invalid.", exception.Message);
     }
+
+    [Fact]
+    public void MemberEmailCapitalizedIsSameAsLowercase()
+    {
+        var e1 = new MemberEmail("HELLO@WORLD.COM");
+        var e2 = new MemberEmail("Hello@World.com");
+
+        Assert.Equal("hello@world.com", e1.Value);
+        Assert.Equal("hello@world.com", e2.Value);
+    }
+
 }

@@ -7,7 +7,6 @@ namespace BookTracker.Api.Tests.IntegrationTests.BookList;
 
 public class BookListTests : IntegrationTest
 {
-    private readonly CustomWebApplicationFactory factory = new();
 
     [Fact]
     public async Task GetBookSummariesReturnsBookSummaries()

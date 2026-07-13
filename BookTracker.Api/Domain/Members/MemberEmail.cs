@@ -13,7 +13,7 @@ public sealed record MemberEmail
             throw new DomainException("Email is required.");
         }
 
-        var cleaned = value.Trim();
+        var cleaned = value.Trim().ToLowerInvariant();
 
         if (cleaned.Length > MaxLength)
         {

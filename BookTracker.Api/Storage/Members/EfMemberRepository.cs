@@ -42,4 +42,10 @@ public class EfMemberRepository(AppDbContext dbContext) : IMemberRepository
 
         return true;
     }
+
+    public async Task<bool> EmailExistsAsync(MemberEmail email, int? memberIdToIgnore = null)
+    {
+        return await dbContext.Members.AnyAsync(member => member.Email == email
+        && ((member.Id != memberIdToIgnore) || (memberIdToIgnore == null)));
+    }
 }
