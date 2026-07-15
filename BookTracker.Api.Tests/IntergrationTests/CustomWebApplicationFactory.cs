@@ -5,12 +5,36 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace BookTracker.Api.Tests.IntegrationTests;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
     private SqliteConnection connection = null!;
+
+    private static readonly KeyValuePair<string, string?>[]
+    TestSettings =
+    [
+        new("SeedDatabase", "false"),
+        new("Jwt:Issuer", "BookTracker.Tests"),
+        new("Jwt:Audience", "BookTracker.Tests"),
+        new(
+            "Jwt:SigningKey",
+            "book-tracker-test-signing-key-with-32-characters"),
+        new("Jwt:ExpirationMinutes", "10")
+    ];
+
+    protected override IHost CreateHost(
+            IHostBuilder builder)
+    {
+        builder.ConfigureHostConfiguration(
+            configuration =>
+                configuration.AddInMemoryCollection(
+                    TestSettings));
+
+        return base.CreateHost(builder);
+    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -51,6 +75,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         base.Dispose(disposing);
         connection.Dispose();
     }
+
 
     public EfReader GetReader() => new(Services);
 
