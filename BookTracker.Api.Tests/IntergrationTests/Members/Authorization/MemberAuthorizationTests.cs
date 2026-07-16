@@ -5,6 +5,7 @@ using BookTracker.Api.Application.UpdateMember;
 using BookTracker.Api.Domain.Members;
 using BookTracker.Api.Tests.IntegrationTests;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookTracker.Api.Tests.IntegrationTests.Members.Authorization;
 
@@ -163,5 +164,122 @@ public class MemberAuthorizationTest : IntegrationTest
         Assert.NotNull(member);
         Assert.Equal("Magic Mike", member.Name.Value);
         Assert.Equal("magicmike@example.com", member.Email.Value);
+    }
+
+    [Fact]
+    public async Task MemberListRequiresAuthentication()
+    {
+        var response =
+            await Client.GetAsync("/members");
+
+        await response.ShouldHaveStatusCode(
+            HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task RegularMemberCannotViewMemberList()
+    {
+        await AuthenticateAsMember();
+
+        var response =
+            await Client.GetAsync("/members");
+
+        await response.ShouldHaveStatusCode(
+            HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
+    public async Task AdministratorCanViewMemberList()
+    {
+        await AuthenticateAsMember(
+            role: MemberRole.Administrator);
+
+        var response =
+            await Client.GetAsync("/members");
+
+        await response.ShouldHaveStatusCode(
+            HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task MemberDetailsRequiresAuthentication()
+    {
+        SeedMember();
+
+        var response =
+            await Client.GetAsync("/members/1");
+
+        await response.ShouldHaveStatusCode(
+            HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task RegularMemberCannotViewMemberDetails()
+    {
+        SeedMember();
+        await AuthenticateAsMember();
+
+        var response =
+            await Client.GetAsync("/members/1");
+
+        await response.ShouldHaveStatusCode(
+            HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
+    public async Task AdministratorCanViewMemberDetails()
+    {
+        SeedMember();
+        await AuthenticateAsMember(
+            role: MemberRole.Administrator);
+
+        var response =
+            await Client.GetAsync("/members/1");
+
+        await response.ShouldHaveStatusCode(
+            HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task AdministratorCanUpdateMember()
+    {
+        SeedMember();
+        await AuthenticateAsMember(
+            role: MemberRole.Administrator);
+
+        var request =
+            new UpdateMemberRequest
+            {
+                Name = new MemberName("Cane Oldman"),
+                Email = "Cannery.row@hotmail.com"
+            };
+
+        var response = await Client.PutAsJsonAsync("/members/1", request);
+
+        await response.ShouldHaveStatusCode(
+            HttpStatusCode.NoContent);
+
+        var updatedMember = await Reader.Query(db =>
+                db.Members.FirstOrDefaultAsync(m => m.Id == 1));
+
+        Assert.Equal("Cane Oldman", updatedMember?.Name.Value);
+        Assert.Equal("cannery.row@hotmail.com", updatedMember?.Email.Value);
+    }
+
+    [Fact]
+    public async Task AdministratorCanDeleteMember()
+    {
+        SeedMember();
+        await AuthenticateAsMember(
+            role: MemberRole.Administrator);
+
+        var response = await Client.DeleteAsync("/members/1");
+
+        await response.ShouldHaveStatusCode(
+            HttpStatusCode.NoContent);
+
+        var count = Reader.Query(db => db.Members.Count());
+
+        Assert.Equal(1, count); // bc authenticateAsMember registers another member
     }
 }

@@ -11,6 +11,8 @@ public class GetMemberSummariesTests : IntegrationTest
     [Fact]
     public async Task GetMemberSummariesReturnsMemberSummaries()
     {
+        await AuthenticateAsMember(
+            role: MemberRole.Administrator);
 
         Writer.Seed(db => db.Members.Add(
             new Member
@@ -28,18 +30,22 @@ public class GetMemberSummariesTests : IntegrationTest
 
         Assert.NotNull(result);
 
-        var memberDetails = Assert.Single(result.Items);
+        Assert.Equal(2, result.Items.Count);
+        var memberDetails = result.Items[1];
         Assert.Equal("Cannery Row", memberDetails.Name);
         Assert.Equal("cannery.row@hotmail.com", memberDetails.Email);
         Assert.Equal(1, result.Page);
         Assert.Equal(10, result.PageSize);
-        Assert.Equal(1, result.TotalItems);
+        Assert.Equal(2, result.TotalItems);
         Assert.Equal(1, result.TotalPages);
     }
 
     [Fact]
     public async Task GetMemberSummariesCanSearchByName()
     {
+        await AuthenticateAsMember(
+            role: MemberRole.Administrator);
+
         Writer.Seed(db =>
         {
             db.Members.AddRange(
@@ -71,6 +77,9 @@ public class GetMemberSummariesTests : IntegrationTest
     [Fact]
     public async Task GetMembersSummariesCanSearchByEmail()
     {
+        await AuthenticateAsMember(
+            role: MemberRole.Administrator);
+
         Writer.Seed(db =>
         {
             db.Members.AddRange(
@@ -101,6 +110,9 @@ public class GetMemberSummariesTests : IntegrationTest
     [Fact]
     public async Task GetMemberSummariesApplyPagingAfterSearch()
     {
+        await AuthenticateAsMember(
+            role: MemberRole.Administrator);
+
         Writer.Seed(db =>
         {
             db.Members.AddRange(
@@ -137,6 +149,9 @@ public class GetMemberSummariesTests : IntegrationTest
     [Fact]
     public async Task GetMembersSummariesAppliesPagingAfterSearchWithoutSearchResults()
     {
+        await AuthenticateAsMember(
+            role: MemberRole.Administrator);
+
         Writer.Seed(db =>
         {
             db.Members.AddRange(

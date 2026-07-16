@@ -82,7 +82,7 @@ public class CreateMemberTests : IntegrationTest
 
     [Fact]
     public async Task PostMemberReturnsBadRequestWhenPasswordIsWhitespace()
-    {
+   {
         var request =
             new CreateMemberRequest
             {
@@ -138,4 +138,36 @@ public class CreateMemberTests : IntegrationTest
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
     }
+
+    [Fact]
+public async Task CreateMemberCreatesRegularMember()
+{
+    var request =
+        new CreateMemberRequest
+        {
+            Name = "Grace Hopper",
+            Email = "grace@example.com",
+            Password = "debugging-moth"
+        };
+
+    var response =
+        await Client.PostAsJsonAsync(
+            "/members",
+            request);
+
+    var created =
+        await response
+            .ReadJsonAs<CreateMemberResponse>(
+                HttpStatusCode.Created);
+
+    var member =
+        Reader.Query(db =>
+            db.Members.Find(created.Id));
+
+    Assert.NotNull(member);
+
+    Assert.Equal(
+        MemberRole.Member,
+        member.Role);
+}
 }

@@ -4,6 +4,7 @@ using BookTracker.Api.Application.DeleteBook;
 using BookTracker.Api.Application.GetBookDetails;
 using BookTracker.Api.Application.UpdateBook;
 using BookTracker.Api.Domain;
+using BookTracker.Api.Security;
 
 namespace BookTracker.Api.Endpoints;
 
@@ -12,10 +13,17 @@ public static class BookEndpoints
     public static IEndpointRouteBuilder MapBookEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet("/books", GetBookSummaries);
+
         app.MapGet("/books/{id:int}", GetBookDetails);
-        app.MapPost("/books", CreateBook).RequireAuthorization();
-        app.MapPut("/books/{id:int}", UpdateBook).RequireAuthorization();
-        app.MapDelete("/books/{id:int}", DeleteBook).RequireAuthorization(); // add the missing mapping for the DELETE route here
+
+        app.MapPost("/books", CreateBook)
+        .RequireAuthorization(AuthorizationPolicies.ManageBooks);
+
+        app.MapPut("/books/{id:int}", UpdateBook)
+        .RequireAuthorization(AuthorizationPolicies.ManageBooks);
+        
+        app.MapDelete("/books/{id:int}", DeleteBook)
+        .RequireAuthorization(AuthorizationPolicies.ManageBooks); // add the missing mapping for the DELETE route here
         return app;
     }
 

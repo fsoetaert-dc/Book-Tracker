@@ -11,6 +11,9 @@ public class GetAllGetMembersPaged : IntegrationTest
     [Fact]
     public async Task GetMemberSummariesReturnsRequestedPage()
     {
+        await AuthenticateAsMember(
+            role: MemberRole.Administrator);
+
         Writer.Seed(db =>
         {
             db.Members.AddRange(
@@ -32,21 +35,24 @@ public class GetAllGetMembersPaged : IntegrationTest
                 });
         });
 
-        var result = await Client.GetFromJsonAsync<PagedResult<MemberSummary>>("/members?page=2&pageSize=1");
+        var result = await Client.GetFromJsonAsync<PagedResult<MemberSummary>>("/members?page=3&pageSize=1");
 
         Assert.NotNull(result);
 
         var member = Assert.Single(result.Items);
 
         Assert.Equal("Const Blyat", member.Name);
-        Assert.Equal(2, result.Page);
+        Assert.Equal(3, result.Page);
         Assert.Equal(1, result.PageSize);
-        Assert.Equal(3, result.TotalItems);
-        Assert.Equal(3, result.TotalPages);
+        Assert.Equal(4, result.TotalItems);
+        Assert.Equal(4, result.TotalPages);
     }
     [Fact]
     public async Task GetMembersSummariesReturnsEmptyItemsWhenPageIsTooHigh()
     {
+        await AuthenticateAsMember(
+            role: MemberRole.Administrator);
+
         Writer.Seed(db =>
         {
             db.Members.Add(
@@ -63,7 +69,7 @@ public class GetAllGetMembersPaged : IntegrationTest
         Assert.Empty(result.Items);
         Assert.Equal(99, result.Page);
         Assert.Equal(10, result.PageSize);
-        Assert.Equal(1, result.TotalItems);
+        Assert.Equal(2, result.TotalItems);
         Assert.Equal(1, result.TotalPages);
     }
 }
