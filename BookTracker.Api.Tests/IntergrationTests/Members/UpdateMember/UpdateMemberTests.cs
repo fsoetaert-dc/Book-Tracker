@@ -12,15 +12,7 @@ public class UpdateMemberTests : IntegrationTest
     [Fact]
     public async Task PutMemberUpdatesMember()
     {
-        Writer.Seed(db =>
-        {
-            db.Members.Add(
-            new Member
-            {
-                Name = new MemberName("Cannery Row"),
-                Email = new MemberEmail("Cannery.row@hotmail.com")
-            });
-        });
+        var memberId = await AuthenticateAsMember();
 
         var request =
             new UpdateMemberRequest
@@ -29,13 +21,13 @@ public class UpdateMemberTests : IntegrationTest
                 Email = new MemberEmail("Lisa.kudrow@hotmail.com")
             };
 
-        var response = await Client.PutAsJsonAsync("/members/1", request);
+        var response = await Client.PutAsJsonAsync($"/members/{memberId}", request);
 
         await response.ShouldHaveStatusCode(HttpStatusCode.NoContent);
 
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode); // mag in principe weg want lijn erboven checkt met een duidelijke foutmelding te geven
 
-        var member = Reader.Query(db => db.Members.Find(1));
+        var member = Reader.Query(db => db.Members.Find(memberId));
 
         Assert.NotNull(member);
         Assert.Equal("Lisa Kudrow", member.Name.Value);
@@ -45,6 +37,8 @@ public class UpdateMemberTests : IntegrationTest
     [Fact]
     public async Task PutMemberReturnsNotFoundWhenMemberDoesNotExist()
     {
+        var memberId = await AuthenticateAsMember();
+
         var request =
             new UpdateMemberRequest
             {
@@ -54,14 +48,14 @@ public class UpdateMemberTests : IntegrationTest
 
         var response = await Client.PutAsJsonAsync("/members/9999", request);
 
-        await response.ShouldHaveStatusCode(HttpStatusCode.NotFound);
-
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode); // mag in principe weg want lijn erboven checkt met een duidelijke foutmelding te geven
+        await response.ShouldHaveStatusCode(HttpStatusCode.Forbidden);
     }
 
     [Fact]
     public async Task PutMemberReturnBadRequestWhenEmailIsInvalid()
     {
+        var memberId = await AuthenticateAsMember();
+
         Writer.Seed(db =>
         {
             db.Members.Add(
@@ -79,7 +73,7 @@ public class UpdateMemberTests : IntegrationTest
                 Email = "      "
             };
 
-        var response = await Client.PutAsJsonAsync("/members/1", request);
+        var response = await Client.PutAsJsonAsync($"/members/{memberId}", request);
 
         await response.ShouldHaveStatusCode(HttpStatusCode.BadRequest);
     }
@@ -87,18 +81,15 @@ public class UpdateMemberTests : IntegrationTest
     [Fact]
     public async Task PutMemberReturnBadRequestWhenEmailAlreadyExists()
     {
+        var memberId = await AuthenticateAsMember("Cane Oldman", "Cane.oldman@hotmail.com", "analytical-engine");
+
         Writer.Seed(db =>
         {
-            db.Members.AddRange(
+            db.Members.Add(
             new Member
             {
                 Name = new MemberName("Cannery Row"),
                 Email = new MemberEmail("Cannery.row@hotmail.com")
-            },
-            new Member
-            {
-                Name = new MemberName("Cane Oldman"),
-                Email = new MemberEmail("Cane.oldman@hotmail.com")
             }
             );
         });
@@ -110,23 +101,15 @@ public class UpdateMemberTests : IntegrationTest
                 Email = "Cannery.row@hotmail.com"
             };
 
-        var response = await Client.PutAsJsonAsync("/members/1", request);
+        var response = await Client.PutAsJsonAsync($"/members/{memberId}", request);
 
         await response.ShouldHaveStatusCode(HttpStatusCode.Conflict);
     }
 
     [Fact]
-    public void PutMemberReturnsNothingWhenEmailDoesNotChange()
+    public async Task PutMemberReturnsNothingWhenEmailDoesNotChangeAsync()
     {
-        Writer.Seed(db =>
-        {
-            db.Members.Add(
-            new Member
-            {
-                Name = new MemberName("Cannery Row"),
-                Email = new MemberEmail("Cannery.row@hotmail.com")
-            });
-        });
+        var memberId = await AuthenticateAsMember("Cannery Row", "Cannery.row@hotmail.com", "analytical-engine");
 
         var request =
             new UpdateMemberRequest
@@ -137,6 +120,8 @@ public class UpdateMemberTests : IntegrationTest
 
         var updatedMember = Reader.Query(db =>
             db.Members.First(m => m.Id == 1));
+
+        var response = await Client.PutAsJsonAsync($"/members/{memberId}", request);
 
         Assert.Equal("cannery.row@hotmail.com", updatedMember.Email.Value);
     }

@@ -11,6 +11,8 @@ public class UpdateBookTests : IntegrationTest
     [Fact]
     public async Task PutBookUpdatesBook()
     {
+        await AuthenticateAsMember();
+
         Writer.Seed(db =>
         {
             db.Books.Add(
@@ -47,6 +49,8 @@ public class UpdateBookTests : IntegrationTest
     [Fact]
     public async Task PutBookReturnsNotFoundWhenBookDoesNotExist()
     {
+        await AuthenticateAsMember();
+
         var request =
             new UpdateBookRequest
             {

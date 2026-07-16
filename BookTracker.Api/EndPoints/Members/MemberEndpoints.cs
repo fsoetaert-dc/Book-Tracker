@@ -5,18 +5,29 @@ using BookTracker.Api.Application.GetMemberDetails;
 using BookTracker.Api.Application.UpdateMember;
 using BookTracker.Api.Domain;
 using BookTracker.Api.Application.Members;
+using System.Security.Claims;
 
 namespace BookTracker.Api.Endpoints;
 
 public static class MemberEndpoints
 {
+    private static bool IsCurrentMember(
+    ClaimsPrincipal user,
+    int memberId)
+    {
+        var claim =
+            user.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        return int.TryParse(claim, out var currentMemberId)
+            && currentMemberId == memberId;
+    }
     public static IEndpointRouteBuilder MapMemberEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet("/members", GetMemberSummaries);
         app.MapGet("/members/{id:int}", GetMemberDetails);
         app.MapPost("/members", CreateMember);
-        app.MapPut("/members/{id:int}", UpdateMember);
-        app.MapDelete("/members/{id:int}", DeleteMember);
+        app.MapPut("/members/{id:int}", UpdateMember).RequireAuthorization();
+        app.MapDelete("/members/{id:int}", DeleteMember).RequireAuthorization();
         return app;
     }
 
@@ -56,8 +67,17 @@ public static class MemberEndpoints
         }
     }
 
-    public static async Task<IResult> UpdateMember(int id, UpdateMemberRequest request, UpdateMemberCommandHandler handler)
+    public static async Task<IResult> UpdateMember(
+        int id,
+        UpdateMemberRequest request,
+        ClaimsPrincipal user,
+        UpdateMemberCommandHandler handler)
     {
+        if (!IsCurrentMember(user, id))
+        {
+            return Results.Forbid();
+        }
+
         try
         {
             var updated = await handler.Execute(id, request);
@@ -78,8 +98,15 @@ public static class MemberEndpoints
 
     }
 
-    public static async Task<IResult> DeleteMember(int id, DeleteMemberCommandHandler handler)
+    public static async Task<IResult> DeleteMember(
+        int id,
+        ClaimsPrincipal user,
+        DeleteMemberCommandHandler handler)
     {
+        if (!IsCurrentMember(user, id))
+        {
+            return Results.Forbid();
+        }
         var deleted = await handler.Execute(id);
 
         if (!deleted)

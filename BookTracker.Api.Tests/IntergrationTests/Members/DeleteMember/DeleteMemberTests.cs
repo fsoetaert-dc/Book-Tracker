@@ -9,36 +9,24 @@ public class DeleteMemberTests : IntegrationTest
     [Fact]
     public async Task DeleteMemberRemovesMember()
     {
+        var memberId = await AuthenticateAsMember();
 
-        Writer.Seed(db =>
-        {
-            db.Members.Add(
-                new Member
-                {
-                    Id = 1,
-                    Name = new MemberName("Frank Herbert"),
-                    Email = new MemberEmail("Frank.herbert@hotmail.com"),
-                });
-        });
-
-        var response = await Client.DeleteAsync("/members/1");
+        var response = await Client.DeleteAsync($"/members/{memberId}");
 
         await response.ShouldHaveStatusCode(HttpStatusCode.NoContent);
 
-        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode); // mag in principe weg want je test hetzelfde erboven
-
-        var member = Reader.Query(db => db.Members.Find(1));
+        var member = Reader.Query(db => db.Members.Find(memberId));
 
         Assert.Null(member);
     }
 
     [Fact]
-    public async Task DeleteMemberReturnsNotFoundWhenMemberDoesNotExist()
+    public async Task DeleteMemberReturnsForbiddenWhenMemberDoesNotExist() //Change NotFound to Forbidden bc Member can only delete itself
     {
+        await AuthenticateAsMember();
+
         var response = await Client.DeleteAsync("/members/9999");
 
-        await response.ShouldHaveStatusCode(HttpStatusCode.NotFound);
-
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode); // mag in principe weg want je test hetzelfde erboven
+        await response.ShouldHaveStatusCode(HttpStatusCode.Forbidden);
     }
 }

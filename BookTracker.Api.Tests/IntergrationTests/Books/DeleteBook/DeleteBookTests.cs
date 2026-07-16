@@ -9,6 +9,7 @@ public class DeleteBookTests : IntegrationTest
     [Fact]
     public async Task DeleteBookRemovesBook()
     {
+        await AuthenticateAsMember();
 
         Writer.Seed(db =>
         {
@@ -36,6 +37,8 @@ public class DeleteBookTests : IntegrationTest
     [Fact]
     public async Task DeleteBookReturnsNotFoundWhenBookDoesNotExist()
     {
+        await AuthenticateAsMember();
+
         var response = await Client.DeleteAsync("/books/9999");
 
         await response.ShouldHaveStatusCode(HttpStatusCode.NotFound);
