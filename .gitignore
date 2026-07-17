@@ -29,6 +29,8 @@ obj/
 *.db
 *.db-shm
 *.db-wal
+node_modules/
+dist/
 
 
 # .NET Core
