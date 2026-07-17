@@ -1,12 +1,18 @@
 using BookTracker.Api.Domain;
+using BookTracker.Api.Domain.Actors;
+using BookTracker.Api.Domain.Books;
 using BookTracker.Api.Storage;
 
 namespace BookTracker.Api.Application.UpdateBook;
 
-public class UpdateBookCommandHandler(IBookRepository bookRepository): IHandler
+public class UpdateBookCommandHandler(IBookRepository bookRepository) : IHandler
 {
-    public async Task<bool> Execute(int id, UpdateBookRequest request)
+    public async Task<bool> Execute(
+        Actor actor,
+        int id,
+        UpdateBookRequest request)
     {
+        BookPermissions.EnsureCanManage(actor);
         var book =
             new Book
             {
@@ -15,7 +21,7 @@ public class UpdateBookCommandHandler(IBookRepository bookRepository): IHandler
                 Author = new AuthorName(request.Author),
                 Year = request.Year
             };
-        
+
         return await bookRepository.UpdateAsync(book);
     }
 }
