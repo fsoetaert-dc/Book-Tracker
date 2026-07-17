@@ -7,6 +7,7 @@ using BookTracker.Api.Domain;
 using BookTracker.Api.Security;
 using System.Security.Claims;
 using QuickFuzzr.UnderTheHood;
+using BookTracker.Api.Storage.Books;
 
 namespace BookTracker.Api.Endpoints;
 
@@ -88,11 +89,16 @@ public static class BookEndpoints
                     actor,
                     id,
                     request);
-            if (!updated)
+            return updated switch
             {
-                return Results.NotFound();
-            }
-            return Results.NoContent();
+                UpdateBookResult.Updated => Results.NoContent(),
+                UpdateBookResult.NotFound => Results.NotFound(),
+                UpdateBookResult.Conflict => Results.Conflict(
+                    new { error = "The book was changed by another user." }),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+
         }
         catch (ForbiddenOperationException)
         {
@@ -105,23 +111,23 @@ public static class BookEndpoints
     }
 
     public static async Task<IResult> DeleteBook(
-        int id, 
-        ClaimsPrincipal principal, 
+        int id,
+        ClaimsPrincipal principal,
         DeleteBookCommandHandler handler)
     {
         try
         {
             var actor = principal.ToActor();
-        
 
-        var deleted = await handler.Execute(actor, id);
 
-        if (!deleted)
-        {
-            return Results.NotFound();
-        }
+            var deleted = await handler.Execute(actor, id);
 
-        return Results.NoContent();
+            if (!deleted)
+            {
+                return Results.NotFound();
+            }
+
+            return Results.NoContent();
         }
         catch (ForbiddenOperationException)
         {

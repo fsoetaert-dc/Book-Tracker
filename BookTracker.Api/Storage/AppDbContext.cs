@@ -26,6 +26,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
                     value => new AuthorName(value))
                 .HasMaxLength(AuthorName.MaxLength);
 
+            book.Property(book => book.Version).IsConcurrencyToken();
+
         });
 
         modelBuilder.Entity<Member>(member =>
@@ -41,8 +43,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
                     email => email.Value,
                     value => new MemberEmail(value))
                 .HasMaxLength(MemberEmail.MaxLength);
+
             member.HasIndex(m => m.Email)
                 .IsUnique();
+                
             member.Property(m => m.Role)
             .HasConversion<string>()
             .HasMaxLength(50);
