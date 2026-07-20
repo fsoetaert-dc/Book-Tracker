@@ -1,6 +1,6 @@
 import { apiRequest } from "../api";
 import type { PagedResult } from "../Types";
-import type { BookSummary, GetBooksRequest } from "./Types";
+import type { BookDetails, BookSummary, GetBooksRequest } from "./Types";
 
 export function getBooks(request: GetBooksRequest) {
   const parameters = new URLSearchParams({
@@ -15,4 +15,8 @@ export function getBooks(request: GetBooksRequest) {
   return apiRequest<PagedResult<BookSummary>>(
     `/books?${parameters.toString()}`,
   );
+}
+
+export function getBook(bookId: number) {
+  return apiRequest<BookDetails>(`/books/${bookId}`);
 }

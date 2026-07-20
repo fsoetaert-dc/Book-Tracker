@@ -5,3 +5,4 @@ export type PagedResult<T> = {
   totalItems: number;
   totalPages: number;
 };
+
