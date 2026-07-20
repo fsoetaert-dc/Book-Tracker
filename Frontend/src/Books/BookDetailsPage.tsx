@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { ApiError } from "../api";
 import { getBook } from "./BooksApi";
 
+
 function readBookId(value: string | undefined) {
   const bookId = Number(value);
   return Number.isInteger(bookId) && bookId > 0 ? bookId : null;

@@ -1,6 +1,12 @@
 import { apiRequest } from "../api";
 import type { PagedResult } from "../Types";
-import type { BookDetails, BookSummary, GetBooksRequest } from "./Types";
+import type {
+  BookDetails,
+  BookSummary,
+  CreateBookRequest,
+  CreateBookResponse,
+  GetBooksRequest,
+} from "./Types";
 
 export function getBooks(request: GetBooksRequest) {
   const parameters = new URLSearchParams({
@@ -19,4 +25,11 @@ export function getBooks(request: GetBooksRequest) {
 
 export function getBook(bookId: number) {
   return apiRequest<BookDetails>(`/books/${bookId}`);
+}
+
+export function createBook(request: CreateBookRequest) {
+  return apiRequest<CreateBookResponse>("/books", {
+    method: "POST",
+    body: JSON.stringify(request),
+  });
 }
