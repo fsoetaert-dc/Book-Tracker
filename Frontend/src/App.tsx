@@ -18,7 +18,6 @@ export default function App() {
   return (
     <>
       <Navigation />
-      <q></q>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
