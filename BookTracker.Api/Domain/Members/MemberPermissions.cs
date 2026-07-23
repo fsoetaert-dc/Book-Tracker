@@ -4,7 +4,7 @@ namespace BookTracker.Api.Domain.Members;
 
 public static class MemberPermissions
 {
-    public static void EnsureCanViewDirectory(
+    public static void EnsureCanViewAccount(
         Actor actor)
     {
         if (actor.IsAdministrator)

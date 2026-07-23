@@ -9,12 +9,12 @@ public class GetMemberDetailsQueryHandler(AppDbContext dbContext) : IHandler
 {
     public async Task<GetMemberDetailsResponse?> Execute(
         Actor actor,
-        int id)
+        int memberId)
     {
-        MemberPermissions.EnsureCanViewDirectory(actor);
+        MemberPermissions.EnsureCanViewAccount(actor);
         return await dbContext.Members
             .AsNoTracking()
-            .Where(member => member.Id == id)
+            .Where(member => member.Id == memberId)
             .Select(member =>
                 new GetMemberDetailsResponse
                 {

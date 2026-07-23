@@ -8,4 +8,6 @@ public record Actor(
 {
     public bool IsAdministrator =>
         Role == MemberRole.Administrator;
+    public bool isMember =>
+        Role == MemberRole.Member;
 }
