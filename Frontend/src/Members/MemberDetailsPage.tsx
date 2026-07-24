@@ -31,7 +31,7 @@ export function MemberDetailsPage() {
         return (
             <main>
                 <h1>Invalid member id</h1>
-                <Link to="/books">Back to books</Link>
+                <Link to="/members">Back to members</Link>
             </main>
         );
     }
@@ -48,7 +48,7 @@ export function MemberDetailsPage() {
             <main>
                 <h1>Member not found</h1>
                 <p>The requested member does not exist.</p>
-                <Link to="/books">Back to books</Link>
+                <Link to="/members">Back to members</Link>
             </main>
         );
     }
@@ -58,7 +58,7 @@ export function MemberDetailsPage() {
             <main>
                 <h1>Could not load the member</h1>
                 <p>Is the API running?</p>
-                <Link to="/books">Back to books</Link>
+                <Link to="/members">Back to members</Link>
             </main>
         );
     }
@@ -67,7 +67,7 @@ export function MemberDetailsPage() {
 
     return (
         <main>
-            <Link to="/books">Back to books</Link>
+            <Link to="/members">Back to members</Link>
             <h1>{member.name}</h1>
             <p>Email: {member.email}</p>
 

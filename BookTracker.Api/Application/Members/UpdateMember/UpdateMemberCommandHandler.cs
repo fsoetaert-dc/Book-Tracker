@@ -26,7 +26,7 @@ public class UpdateMemberCommandHandler(IMemberRepository memberRepository) : IH
                 Email = email,
             };
 
-        if (await memberRepository.EmailExistsAsync(email))
+        if (await memberRepository.EmailExistsAsync(email, id))
         {
             throw new MemberEmailAlreadyExistsException();
         }

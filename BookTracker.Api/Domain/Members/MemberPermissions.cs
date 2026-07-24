@@ -4,7 +4,7 @@ namespace BookTracker.Api.Domain.Members;
 
 public static class MemberPermissions
 {
-    public static void EnsureCanViewAccount(
+    public static void EnsureCanViewMemberList(
         Actor actor)
     {
         if (actor.IsAdministrator)
@@ -14,6 +14,8 @@ public static class MemberPermissions
 
         throw new ForbiddenOperationException(
             "This actor cannot view the member directory.");
+
+
     }
 
     public static void EnsureCanManage(
@@ -26,6 +28,22 @@ public static class MemberPermissions
         }
 
         if (actor.MemberId == memberId)
+        {
+            return;
+        }
+
+        throw new ForbiddenOperationException(
+            "This actor cannot manage this member.");
+    }
+
+    internal static void EnsureCanViewAccount(Actor actor, int memberId)
+    {
+        if (actor.MemberId == memberId)
+        {
+            return;
+        }
+
+        if (actor.IsAdministrator)
         {
             return;
         }

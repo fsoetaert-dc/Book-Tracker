@@ -1,5 +1,6 @@
 using BookTracker.Api.Application.Members;
 using BookTracker.Api.Domain;
+using BookTracker.Api.Domain.Actors;
 using BookTracker.Api.Domain.Members;
 using BookTracker.Api.Storage;
 using Microsoft.AspNetCore.Identity;

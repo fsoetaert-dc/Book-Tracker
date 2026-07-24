@@ -11,7 +11,7 @@ public class GetMemberDetailsQueryHandler(AppDbContext dbContext) : IHandler
         Actor actor,
         int memberId)
     {
-        MemberPermissions.EnsureCanViewAccount(actor);
+        MemberPermissions.EnsureCanViewAccount(actor, memberId);
         return await dbContext.Members
             .AsNoTracking()
             .Where(member => member.Id == memberId)

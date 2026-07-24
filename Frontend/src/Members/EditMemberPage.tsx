@@ -18,7 +18,7 @@ export function EditMemberPage() {
     const navigate = useNavigate();
 
     const memberQuery = useQuery({
-        queryKey: ["members", "detail", memberId],
+        queryKey: ["members", memberId],
         queryFn: () => {
             if (memberId === null) {
                 throw new Error("Invalid member id");
@@ -58,7 +58,7 @@ export function EditMemberPage() {
 
 
         if (!name || !email) {
-            setFormError("Enter a valid name, and email.");
+            setFormError("Enter a valid name and email.");
             return;
         }
 
@@ -97,40 +97,46 @@ export function EditMemberPage() {
         return <p>Could not load the member.</p>;
     }
 
+    const onCancel = () => {
+    navigate(-1);
+    };
+
+
     const member = memberQuery.data;
     const mutationStatus =
         updateMutation.error instanceof ApiError
             ? updateMutation.error.status
             : null;
+                    
 
     return (
         <main>
-            <Link to={`/members/${member.id}`}>Cancel</Link>
+            <button onClick={onCancel}>Cancel</button>
             <h1>Edit {member.name}</h1>
-            <form key={member.id} onSubmit={handleSubmit}></form>
-            <label>
-                Title
-                <input
-                    name="name"
-                    defaultValue={member.name}
-                    maxLength={100}
-                    required
-                />
-            </label>
+            <form key={member.id} onSubmit={handleSubmit}>
+                <label>
+                    Name
+                    <input
+                        name="name"
+                        defaultValue={member.name}
+                        maxLength={100}
+                        required
+                    />
+                </label>
+                <label>
+                    Email
+                    <input
+                        name="email"
+                        defaultValue={member.email}
+                        maxLength={100}
+                        required
+                    />
+                </label>
 
-            <label>
-                Author
-                <input
-                    name="email"
-                    defaultValue={member.email}
-                    maxLength={100}
-                    required
-                />
-            </label>
-
-            <button type="submit" disabled={updateMutation.isPending}>
-                {updateMutation.isPending ? "Saving..." : "Save changes"}
-            </button>
+                <button type="submit" disabled={updateMutation.isPending}>
+                    {updateMutation.isPending ? "Saving..." : "Save changes"}
+                </button>
+            </form>
 
             {formError && <p>{formError}</p>}
             {mutationStatus === 400 && <p>The API rejected the member data.</p>}

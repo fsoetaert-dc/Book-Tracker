@@ -27,7 +27,7 @@ export function getMembers(request: GetMembersRequest) {
   }
 
   return apiRequest<PagedResult<MemberSummary>>(
-    `/books?${parameters.toString()}`,
+    `/members?${parameters.toString()}`,
   );
 }
 

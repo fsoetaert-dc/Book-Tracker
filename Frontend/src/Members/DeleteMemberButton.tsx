@@ -22,10 +22,10 @@ export function DeleteMemberButton({ memberId, name }: DeleteMemberButtonProps) 
       refetchType: "none",
     });
     queryClient.removeQueries({
-      queryKey: ["books", "detail", memberId],
+      queryKey: ["members", "detail", memberId],
       exact: true,
     });
-    navigate("/books");
+    navigate("/members");
   }
 
   const deleteMutation = useMutation({
@@ -34,8 +34,7 @@ export function DeleteMemberButton({ memberId, name }: DeleteMemberButtonProps) 
   });
 
   if (
-    !currentMemberQuery.isSuccess ||
-    currentMemberQuery.data.role !== "Administrator"
+    !currentMemberQuery.isSuccess
   ) {
     return null;
   }
@@ -43,12 +42,12 @@ export function DeleteMemberButton({ memberId, name }: DeleteMemberButtonProps) 
   if (!confirming) {
     return (
       <button type="button" onClick={() => setConfirming(true)}>
-        Delete member
+        Delete Account
       </button>
     );
   }
 
-    const mutationStatus =
+  const mutationStatus =
     deleteMutation.error instanceof ApiError
       ? deleteMutation.error.status
       : null;

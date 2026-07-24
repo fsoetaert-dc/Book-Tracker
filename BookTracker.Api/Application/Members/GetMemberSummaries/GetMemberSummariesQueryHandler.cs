@@ -16,7 +16,8 @@ public class GetMemberSummariesQueryHandler(AppDbContext dbContext) : IHandler
         Actor actor,
         GetMemberSummariesRequest request)
     {
-        MemberPermissions.EnsureCanViewAccount(
+
+        MemberPermissions.EnsureCanViewMemberList(
         actor);
 
         var page = Math.Max(1, request.Page ?? DefaultPage);

@@ -10,6 +10,7 @@ import { RegisterPage } from "./Members/RegisterPage";
 import { EditMemberPage } from "./Members/EditMemberPage";
 import { MemberListPage } from "./Members/MemberListPage";
 import { Navigation } from "./Navigation";
+import { MemberDetailsPage } from "./Members/MemberDetailsPage";
 
 
 function HomePage() {
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="/books/new" element={<CreateBookPage />} />
           <Route path="/books/:bookId/edit" element={<EditBookPage />} />
           <Route path="/members" element={<MemberListPage />} />
+          <Route path="/members/:memberId" element={<MemberDetailsPage />} />
         </Route>
         <Route path="/books/:bookId" element={<BookDetailsPage />} />
         <Route path="/register" element={<RegisterPage />} />

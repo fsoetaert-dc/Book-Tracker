@@ -3,6 +3,7 @@ import { ApiError } from "../api";
 import { getAccessToken } from "./tokenStorage";
 import { useCurrentMember } from "./UseCurrentMember";
 import { EditMemberLink } from "../Members/EditMemberLink";
+import { DeleteMemberButton } from "../Members/DeleteMemberButton";
 
 export function AccountPage() {
   const currentMemberQuery = useCurrentMember();
@@ -28,13 +29,15 @@ export function AccountPage() {
   }
 
   const member = currentMemberQuery.data;
-
   return (
     <main>
-      <EditMemberLink memberId={member.id} ></EditMemberLink>
+
+      <EditMemberLink memberId={member.id} ></EditMemberLink>{" "}
+      <DeleteMemberButton memberId={member.id} name={member.name}></DeleteMemberButton>
       <h1>{member.name}</h1>
       <p>{member.email}</p>
       <p>Role: {member.role}</p>
+
     </main>
   );
 }

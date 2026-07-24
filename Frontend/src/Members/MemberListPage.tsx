@@ -47,11 +47,11 @@ export function MemberListPage() {
   }
 
   if (membersQuery.isPending) {
-    return <p>Loading books...</p>;
+    return <p>Loading member...</p>;
   }
 
   if (membersQuery.isError) {
-    return <p>Could not load the books. Is the API running?</p>;
+    return <p>Could not load the members. Is the API running?</p>;
   }
 
   const result = membersQuery.data;
@@ -61,7 +61,7 @@ export function MemberListPage() {
       <h1>Members</h1>
       <form key={search} onSubmit={handleSearch}>
         <label>
-          Search by title or author
+          Search by name or email.
           <input type="search" name="search" defaultValue={search} />
         </label>
         <button type="submit">Search</button>
@@ -73,7 +73,7 @@ export function MemberListPage() {
           {result.items.map((member) => (
             <li key={member.id}>
               <Link to={`/members/${member.id}`}>
-                <strong>{member.name}</strong> by {member.email}
+                Name: {member.name}{" "}Email: {member.email}
               </Link>
             </li>
           ))}

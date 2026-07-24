@@ -13,5 +13,5 @@ export function EditMemberLink({ memberId }: EditMemberLinkProps) {
         return null;
     }
 
-    return <Link to={`/members/${memberId}/edit`}>Edit member</Link>;
+    return <Link to={`/members/${memberId}/edit`}>Edit Account</Link>;
 }
